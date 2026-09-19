@@ -1,0 +1,23 @@
+USE GRAPH FraudGraph
+
+CREATE OR REPLACE QUERY new_device_proxy(VERTEX<Transaction> target_txn) FOR GRAPH FraudGraph {
+    /* Checks if transaction device is marked New or behind a proxy */
+    OrAccum @@is_new_device;
+    OrAccum @@is_proxy;
+    ListAccum<STRING> @@device_details;
+
+    Start = { target_txn };
+    Dev = SELECT d FROM Start:t -(FROM_DEVICE:e)-> DeviceProfile:d
+          ACCUM
+              IF t.device_new_found == "New" THEN
+                  @@is_new_device = true
+              END,
+              IF t.proxy_type == "anonymous" OR t.proxy_type == "hidden" THEN
+                  @@is_proxy = true
+              END,
+              @@device_details += d.id;
+
+    PRINT @@is_new_device AS is_new_device,
+          @@is_proxy AS is_proxy,
+          @@device_details AS device_profile;
+}

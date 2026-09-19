@@ -1,0 +1,34 @@
+USE GRAPH FraudGraph
+
+CREATE OR REPLACE QUERY small_auth_sequence(VERTEX<Card> target_card, DATETIME anchor_ts, INT window_hours) FOR GRAPH FraudGraph {
+    /* Identifies card testing: 3+ online authorizations under $5 within window, followed by larger purchase */
+    ListAccum<VERTEX<Transaction>> @@small_txns;
+    ListAccum<VERTEX<Transaction>> @@large_txns;
+    SumAccum<INT> @@small_count;
+    OrAccum @@is_testing_pattern;
+
+    DATETIME start_w = datetime_add(anchor_ts, INTERVAL -window_hours HOUR);
+    DATETIME end_w = datetime_add(anchor_ts, INTERVAL window_hours HOUR);
+
+    Start = { target_card };
+    Txns = SELECT t FROM Start:c -(MADE:e)-> Transaction:t
+           WHERE t.ts >= start_w AND t.ts <= end_w AND t.channel == "online"
+           ACCUM 
+               CASE 
+                   WHEN t.amount <= 5.0 THEN 
+                       @@small_txns += t,
+                       @@small_count += 1
+                   WHEN t.amount > 10.0 THEN
+                       @@large_txns += t
+               END
+           ORDER BY t.ts ASC;
+
+    IF @@small_count >= 3 AND @@large_txns.size() >= 1 THEN
+        @@is_testing_pattern = true;
+    END;
+
+    PRINT @@is_testing_pattern AS is_card_testing,
+          @@small_count AS small_auth_count,
+          @@small_txns AS small_authorizations,
+          @@large_txns AS larger_purchases;
+}

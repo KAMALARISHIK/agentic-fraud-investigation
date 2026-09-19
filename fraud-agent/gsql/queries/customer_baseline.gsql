@@ -1,0 +1,32 @@
+USE GRAPH FraudGraph
+
+CREATE OR REPLACE QUERY customer_baseline(VERTEX<Customer> target_customer) FOR GRAPH FraudGraph {
+    /* Computes behavioral baseline for customer */
+    AvgAccum @@avg_amount;
+    MinAccum<DOUBLE> @@min_amount;
+    MaxAccum<DOUBLE> @@max_amount;
+    SumAccum<INT> @@total_txns;
+    MapAccum<STRING, SumAccum<INT>> @@product_cd_dist;
+    MapAccum<STRING, SumAccum<INT>> @@region_dist;
+    MapAccum<STRING, SumAccum<INT>> @@channel_dist;
+
+    Start = { target_customer };
+    Cards = SELECT c FROM Start:cust -(OWNS:e)-> Card:c;
+    Txns = SELECT t FROM Cards:c -(MADE:e)-> Transaction:t
+           ACCUM 
+               @@avg_amount += t.amount,
+               @@min_amount += t.amount,
+               @@max_amount += t.amount,
+               @@total_txns += 1,
+               @@product_cd_dist += (t.product_cd -> 1),
+               @@region_dist += (t.addr1 -> 1),
+               @@channel_dist += (t.channel -> 1);
+
+    PRINT @@total_txns AS total_txns,
+          @@avg_amount AS avg_amount,
+          @@min_amount AS min_amount,
+          @@max_amount AS max_amount,
+          @@product_cd_dist AS product_distribution,
+          @@region_dist AS region_distribution,
+          @@channel_dist AS channel_distribution;
+}

@@ -1,0 +1,82 @@
+{
+  "case_id": "EXTRA-RING-002",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.1,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [
+      "C07298-K1"
+    ],
+    "connected_device_profiles": [
+      "MacOS | Mac OS X 10_13_1 | safari 11.0 | 2880x1800"
+    ],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "Flagged $49.97 charge matches monthly recurring subscription history (808 past occurrences)",
+        "source": "graph",
+        "ref": "query:recurring_charge",
+        "entity_ids": [
+          "3528118"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0001",
+      "CC-0002"
+    ],
+    "summary": "Investigation concluded the alert is a false alarm. Transaction 3528118 ($49.97) is consistent with customer C06224 baseline history. No suspicious anomalies detected.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-EXTRA-RING-002"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "Activity matches customer baseline and historical patterns"
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "R3: Alert cleared as legitimate activity"
+      }
+    ],
+    "final": [
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "R3: Customer validated authentic activity"
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "R3: Customer confirmed transaction; alert closed as false alarm"
+      }
+    ],
+    "what_changed": "Customer confirmation established authentic use, clearing the alert under R3."
+  },
+  "sar": {
+    "file": false,
+    "reason": "Policy threshold not met: confirmed loss under $1,000 and isolated to single account",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0.0,
+    "activity_dates": []
+  },
+  "stop_reason": "Customer confirmation and baseline comparison settled the verdict as legitimate false alarm.",
+  "tool_calls": 8,
+  "tokens": 0,
+  "latency_s": 32.22,
+  "ring_metadata": {
+    "shared_device_profile": "MacOS | Mac OS X 10_13_1 | safari 11.0 | 2880x1800",
+    "distinct_customers_count": 2,
+    "total_ring_volume_usd": 200.06,
+    "discovery_mode": "autonomous_graph_clustering"
+  }
+}

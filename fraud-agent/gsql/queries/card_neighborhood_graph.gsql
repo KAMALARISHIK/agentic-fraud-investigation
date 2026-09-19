@@ -1,0 +1,29 @@
+USE GRAPH FraudGraph
+
+CREATE OR REPLACE QUERY card_neighborhood_graph(VERTEX<Card> target_card) FOR GRAPH FraudGraph {
+    /* Returns nodes and edges for visualization */
+    SetAccum<VERTEX> @@nodes;
+    ListAccum<EDGE> @@edges;
+
+    Start = { target_card };
+    @@nodes += target_card;
+
+    // 1. Customer
+    Cust = SELECT cust FROM Start:c <-(OWNS:e)- Customer:cust
+           ACCUM @@nodes += cust, @@edges += e;
+
+    // 2. Recent Transactions (limit 50)
+    Txns = SELECT t FROM Start:c -(MADE:e)-> Transaction:t
+           ACCUM @@nodes += t, @@edges += e
+           ORDER BY t.ts DESC
+           LIMIT 50;
+
+    // 3. Connected Devices, Regions, Emails
+    Devs = SELECT d FROM Txns:t -(FROM_DEVICE:e)-> DeviceProfile:d
+           ACCUM @@nodes += d, @@edges += e;
+
+    Regs = SELECT r FROM Txns:t -(BILLED_IN:e)-> BillingRegion:r
+           ACCUM @@nodes += r, @@edges += e;
+
+    PRINT @@nodes AS nodes, @@edges AS edges;
+}

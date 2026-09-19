@@ -1,0 +1,121 @@
+// ==========================================
+// TigerGraph Schema for FraudGraph
+// TigerGraph 4.x Compatible
+// ==========================================
+
+USE GRAPH FraudGraph
+
+CREATE SCHEMA_CHANGE JOB change_schema_fraud FOR GRAPH FraudGraph {
+    // 1. Entities
+    ADD VERTEX Customer(PRIMARY_ID id STRING, customer_id STRING);
+    ADD VERTEX Card(PRIMARY_ID id STRING, card_id STRING, card_type STRING, card_network STRING);
+    ADD VERTEX DeviceProfile(PRIMARY_ID id STRING, device_info STRING, os STRING, browser STRING, screen STRING, device_type STRING);
+    ADD VERTEX EmailDomain(PRIMARY_ID id STRING, domain STRING);
+    ADD VERTEX BillingRegion(PRIMARY_ID id STRING, region_code STRING, country_code STRING);
+    
+    // 2. Transactions
+    ADD VERTEX Transaction(
+        PRIMARY_ID id STRING,
+        ts DATETIME,
+        amount DOUBLE,
+        product_cd STRING,
+        channel STRING,
+        risk_score DOUBLE,
+        dist1 DOUBLE,
+        addr1 STRING,
+        addr2 STRING,
+        p_emaildomain STRING,
+        r_emaildomain STRING,
+        device_new_found STRING,
+        proxy_type STRING,
+        c1 DOUBLE,
+        c2 DOUBLE,
+        c13 DOUBLE,
+        d1 DOUBLE,
+        d15 DOUBLE,
+        m4 STRING,
+        v_features_sum DOUBLE
+    );
+
+    // 3. Historical Closed Cases
+    ADD VERTEX ClosedCase(
+        PRIMARY_ID id STRING,
+        opened_at DATETIME,
+        closed_at DATETIME,
+        outcome STRING,
+        pattern STRING,
+        exposure_usd DOUBLE,
+        n_txns INT,
+        report_filed BOOL,
+        analyst_notes STRING,
+        embedding LIST<DOUBLE>
+    );
+
+    // 4. Live Case Memory, Findings, Actions & Policy Knowledge
+    ADD VERTEX InvestigationCase(
+        PRIMARY_ID id STRING,
+        opened_at DATETIME,
+        status STRING,
+        verdict STRING,
+        fraud_probability DOUBLE,
+        pattern STRING,
+        pattern_description STRING,
+        exposure_usd DOUBLE,
+        stop_reason STRING,
+        summary STRING,
+        written_to_graph BOOL,
+        embedding LIST<DOUBLE>
+    );
+
+    ADD VERTEX Finding(
+        PRIMARY_ID id STRING,
+        claim STRING,
+        source STRING,
+        ref STRING,
+        created_at DATETIME
+    );
+
+    ADD VERTEX ActionRecord(
+        PRIMARY_ID id STRING,
+        action STRING,
+        route STRING,
+        reason STRING,
+        status STRING,
+        executed_at DATETIME
+    );
+
+    ADD VERTEX PolicyChunk(
+        PRIMARY_ID id STRING,
+        title STRING,
+        rule_code STRING,
+        text STRING,
+        embedding LIST<DOUBLE>
+    );
+
+    // ------------------------------------------
+    // Graph Edges
+    // ------------------------------------------
+    ADD UNDIRECTED EDGE OWNS(FROM Customer, TO Card);
+    ADD DIRECTED EDGE MADE(FROM Card, TO Transaction);
+    ADD DIRECTED EDGE FROM_DEVICE(FROM Transaction, TO DeviceProfile);
+    ADD DIRECTED EDGE PURCHASER_EMAIL(FROM Transaction, TO EmailDomain);
+    ADD DIRECTED EDGE RECIPIENT_EMAIL(FROM Transaction, TO EmailDomain);
+    ADD DIRECTED EDGE BILLED_IN(FROM Transaction, TO BillingRegion);
+    ADD DIRECTED EDGE NEXT(FROM Transaction, TO Transaction);
+
+    // Closed Case Edges
+    ADD DIRECTED EDGE INVOLVES(FROM ClosedCase, TO Transaction);
+    ADD DIRECTED EDGE ON_CARD(FROM ClosedCase, TO Card);
+    ADD DIRECTED EDGE CONNECTED_TO(FROM ClosedCase, TO Card);
+
+    // Live Case & GraphRAG Edges
+    ADD DIRECTED EDGE CASE_ON_CARD(FROM InvestigationCase, TO Card);
+    ADD DIRECTED EDGE CASE_INVOLVES_TXN(FROM InvestigationCase, TO Transaction);
+    ADD DIRECTED EDGE CASE_SHARES_DEVICE(FROM InvestigationCase, TO DeviceProfile);
+    ADD DIRECTED EDGE CASE_HAS_FINDING(FROM InvestigationCase, TO Finding);
+    ADD DIRECTED EDGE CASE_HAS_ACTION(FROM InvestigationCase, TO ActionRecord);
+    ADD UNDIRECTED EDGE SIMILAR_TO(FROM InvestigationCase, TO ClosedCase, similarity DOUBLE);
+    ADD UNDIRECTED EDGE SIMILAR_CASES(FROM InvestigationCase, TO InvestigationCase, similarity DOUBLE);
+}
+
+RUN SCHEMA_CHANGE JOB change_schema_fraud

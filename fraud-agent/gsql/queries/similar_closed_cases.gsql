@@ -1,0 +1,27 @@
+USE GRAPH FraudGraph
+
+CREATE OR REPLACE QUERY similar_closed_cases(VERTEX<Card> target_card, STRING pattern_filter) FOR GRAPH FraudGraph {
+    /* Finds closed cases sharing card, device, or pattern similarity */
+    ListAccum<VERTEX<ClosedCase>> @@similar_cases;
+    SetAccum<VERTEX<DeviceProfile>> @@card_devices;
+
+    StartCard = { target_card };
+    Txns = SELECT t FROM StartCard:c -(MADE:e)-> Transaction:t;
+    Devs = SELECT d FROM Txns:t -(FROM_DEVICE:e)-> DeviceProfile:d
+           ACCUM @@card_devices += d;
+
+    // 1. Check cases on this card directly
+    DirectCases = SELECT cc FROM StartCard:c <-(ON_CARD:e)- ClosedCase:cc
+                  ACCUM @@similar_cases += cc;
+
+    // 2. Check cases with matching pattern filter
+    IF pattern_filter != "" THEN
+        PatCases = SELECT cc FROM ClosedCase:cc
+                   WHERE cc.pattern == pattern_filter
+                   LIMIT 5;
+        PatCases2 = SELECT cc FROM PatCases:cc
+                    ACCUM @@similar_cases += cc;
+    END;
+
+    PRINT @@similar_cases AS similar_cases;
+}

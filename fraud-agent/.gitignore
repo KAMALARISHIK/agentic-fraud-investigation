@@ -1,0 +1,27 @@
+# Environments & Secrets
+.env
+venv/
+.venv/
+env/
+*.env
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Datasets & Big Data Files (Hard Rule: Never commit dataset CSVs or DBs)
+*.csv
+*.csv.csv
+*.parquet
+*.duckdb
+*.db
+scratch/
+scratch*.py
+
+# IDE / System
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,96 @@
+{
+  "case_id": "EXTRA-RING-001",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.1,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [
+      "C01155-K1",
+      "C12552-K1",
+      "C13000-K1",
+      "C00750-K1",
+      "C00854-K1",
+      "C12189-K1",
+      "C12961-K1",
+      "C07102-K1",
+      "C01909-K1",
+      "C12166-K1",
+      "C12897-K1",
+      "C07212-K1",
+      "C12532-K1",
+      "C02716-K1",
+      "C06014-K1"
+    ],
+    "connected_device_profiles": [
+      "MacOS | Mac OS X 10_12_5 | safari generic | 2560x1600"
+    ],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "Flagged $100.00 charge matches monthly recurring subscription history (57 past occurrences)",
+        "source": "graph",
+        "ref": "query:recurring_charge",
+        "entity_ids": [
+          "3425527"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0001",
+      "CC-0002"
+    ],
+    "summary": "Investigation concluded the alert is a false alarm. Transaction 3425527 ($100.00) is consistent with customer C01377 baseline history. No suspicious anomalies detected.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-EXTRA-RING-001"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "Activity matches customer baseline and historical patterns"
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "R3: Alert cleared as legitimate activity"
+      }
+    ],
+    "final": [
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "R3: Customer validated authentic activity"
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "R3: Customer confirmed transaction; alert closed as false alarm"
+      }
+    ],
+    "what_changed": "Customer confirmation established authentic use, clearing the alert under R3."
+  },
+  "sar": {
+    "file": false,
+    "reason": "Policy threshold not met: confirmed loss under $1,000 and isolated to single account",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0.0,
+    "activity_dates": []
+  },
+  "stop_reason": "Customer confirmation and baseline comparison settled the verdict as legitimate false alarm.",
+  "tool_calls": 8,
+  "tokens": 0,
+  "latency_s": 38.8,
+  "ring_metadata": {
+    "shared_device_profile": "MacOS | Mac OS X 10_12_5 | safari generic | 2560x1600",
+    "distinct_customers_count": 2,
+    "total_ring_volume_usd": 149.88,
+    "discovery_mode": "autonomous_graph_clustering"
+  }
+}

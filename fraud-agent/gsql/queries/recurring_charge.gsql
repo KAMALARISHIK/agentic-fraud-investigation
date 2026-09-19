@@ -1,0 +1,24 @@
+USE GRAPH FraudGraph
+
+CREATE OR REPLACE QUERY recurring_charge(VERTEX<Card> target_card, DOUBLE target_amount, STRING target_product) FOR GRAPH FraudGraph {
+    /* Checks if customer has recurring regular monthly charges matching target_amount (Policy R7) */
+    ListAccum<DATETIME> @@matching_timestamps;
+    SumAccum<INT> @@match_count;
+    OrAccum @@is_recurring;
+
+    Start = { target_card };
+    Txns = SELECT t FROM Start:c -(MADE:e)-> Transaction:t
+           WHERE abs(t.amount - target_amount) < 1.0 AND (t.product_cd == target_product OR target_product == "")
+           ACCUM 
+               @@matching_timestamps += t.ts,
+               @@match_count += 1
+           ORDER BY t.ts ASC;
+
+    IF @@match_count >= 2 THEN
+        @@is_recurring = true;
+    END;
+
+    PRINT @@is_recurring AS is_recurring_charge,
+          @@match_count AS recurring_count,
+          @@matching_timestamps AS timestamps;
+}

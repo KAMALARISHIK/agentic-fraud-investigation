@@ -1,0 +1,14 @@
+USE GRAPH FraudGraph
+
+CREATE OR REPLACE QUERY card_window(VERTEX<Card> target_card, DATETIME start_ts, DATETIME end_ts) FOR GRAPH FraudGraph {
+    /* Returns all transactions made on the card between start_ts and end_ts */
+    ListAccum<EDGE> @@edges;
+    
+    Start = { target_card };
+    Txns = SELECT t FROM Start:c -(MADE:e)-> Transaction:t
+           WHERE t.ts >= start_ts AND t.ts <= end_ts
+           ACCUM @@edges += e
+           ORDER BY t.ts ASC;
+
+    PRINT Txns[Txns.id, Txns.ts, Txns.amount, Txns.product_cd, Txns.channel, Txns.risk_score, Txns.addr1, Txns.device_new_found, Txns.proxy_type];
+}

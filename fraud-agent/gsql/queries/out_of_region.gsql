@@ -1,0 +1,51 @@
+USE GRAPH FraudGraph
+
+CREATE OR REPLACE QUERY out_of_region(VERTEX<Card> target_card, VERTEX<Transaction> target_txn) FOR GRAPH FraudGraph {
+    /* Checks if target_txn is out-of-region while home region activity continues */
+    STRING home_region = "";
+    STRING current_region = "";
+    DATETIME current_ts;
+    MapAccum<STRING, SumAccum<INT>> @@region_counts;
+    SumAccum<INT> @@home_txns_nearby;
+
+    StartTxn = { target_txn };
+    SELECT t INTO T FROM StartTxn:t
+           ACCUM current_region = t.addr1, current_ts = t.ts;
+
+    StartCard = { target_card };
+    AllTxns = SELECT t FROM StartCard:c -(MADE:e)-> Transaction:t
+              ACCUM @@region_counts += (t.addr1 -> 1);
+
+    // Identify most frequent region as home
+    INT max_c = 0;
+    FOREACH (reg, cnt) IN @@region_counts DO
+        IF cnt > max_c AND reg != "" THEN
+            max_c = cnt;
+            home_region = reg;
+        END;
+    END;
+
+    BOOL is_out_of_region = false;
+    IF current_region != home_region AND current_region != "" THEN
+        is_out_of_region = true;
+    END;
+
+    // Check if home region transactions occur within +/- 48h
+    DATETIME start_win = datetime_add(current_ts, INTERVAL -48 HOUR);
+    DATETIME end_win = datetime_add(current_ts, INTERVAL 48 HOUR);
+
+    NearbyHome = SELECT t FROM StartCard:c -(MADE:e)-> Transaction:t
+                 WHERE t.addr1 == home_region AND t.ts >= start_win AND t.ts <= end_win
+                 ACCUM @@home_txns_nearby += 1;
+
+    BOOL is_clone_suspected = false;
+    IF is_out_of_region AND @@home_txns_nearby > 0 THEN
+        is_clone_suspected = true;
+    END;
+
+    PRINT is_out_of_region AS is_out_of_region,
+          is_clone_suspected AS is_clone_suspected,
+          home_region AS home_billing_region,
+          current_region AS transaction_region,
+          @@home_txns_nearby AS simultaneous_home_activity;
+}
