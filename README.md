@@ -322,8 +322,7 @@ The agent routes 100% of its graph interactions through official MCP stdio tools
 | `tigergraph__get_vertex_count` | System Health | Schema-level graph entity volume verification |
 
 ---
-
-## 📜 7. Policy Rules (R1–R10) & Routing Engine Reference
+ 📜 7. Policy Rules (R1–R10) & Routing Engine Reference
 
 | Rule ID | Rule Name | Trigger Condition | Mandatory Actions & Routing |
 | :--- | :--- | :--- | :--- |
@@ -339,8 +338,7 @@ The agent routes 100% of its graph interactions through official MCP stdio tools
 | **R10** | Graph Memory Persistence | Every completed investigation and finding | Write `InvestigationCase` & `Finding` to TigerGraph (`auto`) |
 
 ---
-
-## 🌐 8. REST API Endpoints Reference
+ 🌐 8. REST API Endpoints Reference
 
 See [API.md](file:///C:/GOA%20TIGER/API.md) for full request/response schemas and cURL examples.
 
@@ -360,39 +358,7 @@ See [API.md](file:///C:/GOA%20TIGER/API.md) for full request/response schemas an
 | `GET` | `/stats` | Operational performance metrics and token analytics |
 | `GET` | `/extra/scan` | Trigger Innovation Extra autonomous ring scan |
 | `GET` | `/extra/cases` | List all discovered extra fraud ring cases |
-
----
-
-## 🔒 9. How to Safely Push to GitHub
-
-The `.gitignore` file is pre-configured to strictly exclude all secrets (`.env`), database files (`*.duckdb`, `*.parquet`), and large CSV datasets (`transactions.csv`, `identity.csv`).
-
-To push your repository cleanly to GitHub:
-
-### Step 1: Verify Git Status
-```powershell
-git status
-```
-*Ensure `.env`, `*.csv`, `*.duckdb`, and cache folders are NOT staged.*
-
-### Step 2: Add and Commit Files
-```powershell
-git add .
-git commit -m "Complete Autonomous Fraud Investigation Agent with TigerGraph MCP, LangGraph, and FastAPI"
-```
-
-### Step 3: Set Remote & Push
-```powershell
-# If setting remote for the first time:
-# git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
-# git branch -M main
-
-git push -u origin main
-```
-
----
-
-## 📄 10. License & Acknowledgments
+📄 9. License & Acknowledgments
 
 - **Dataset**: IEEE-CIS Fraud Detection Dataset (Vesta Corporation).
 - **Graph Engine**: TigerGraph Savanna Cloud 4.2.5 (`FraudGraph`).
