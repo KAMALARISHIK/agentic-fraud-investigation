@@ -21,6 +21,10 @@ def get_tg_connection(
         return None
 
     host = config.TG_HOST.rstrip("/")
+    if not host.startswith("http://") and not host.startswith("https://"):
+        host = f"https://{host}"
+    
+    is_tgcloud = bool(config.TG_TGCLOUD or ("tgcloud.io" in host))
     graph_name = config.TG_GRAPHNAME
 
     delay = initial_delay
@@ -39,7 +43,7 @@ def get_tg_connection(
                 username=config.TG_USERNAME if config.TG_USERNAME else None,
                 password=config.TG_PASSWORD if config.TG_PASSWORD else None,
                 apiToken=api_token,
-                tgCloud=True if "tgcloud.io" in host else False,
+                tgCloud=is_tgcloud,
             )
 
             # Step 2: Handle authentication if apiToken not directly provided

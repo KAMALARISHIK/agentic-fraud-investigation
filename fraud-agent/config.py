@@ -10,10 +10,11 @@ load_dotenv(BASE_DIR / ".env")
 
 # TigerGraph Settings
 TG_HOST = os.getenv("TG_HOST", "")
-TG_GRAPHNAME = os.getenv("TG_GRAPHNAME", "FraudGraph")
+TG_GRAPHNAME = os.getenv("TG_GRAPHNAME", "GraphmeetsAIdetective")
 TG_SECRET = os.getenv("TG_SECRET", "")
 TG_USERNAME = os.getenv("TG_USERNAME", "")
 TG_PASSWORD = os.getenv("TG_PASSWORD", "")
+TG_TGCLOUD = os.getenv("TG_TGCLOUD", "false").lower() in ("true", "1", "yes")
 
 # Gemini Settings
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")

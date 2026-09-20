@@ -7,6 +7,10 @@ class HealthResponse(BaseModel):
     duckdb_connected: bool
     cases_loaded: int
     version: str = "1.0.0"
+    vertex_counts: Optional[Dict[str, int]] = None
+    installed_query_count: Optional[int] = None
+    vector_index_status: Optional[str] = None
+    mcp_status: Optional[str] = None
 
 class ActionItem(BaseModel):
     action: str

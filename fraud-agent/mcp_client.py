@@ -188,6 +188,8 @@ class TigerGraphMCPManager:
                         return data["data"], True
                     if "results" in data:
                         return data["results"], True
+                    if "result" in data:
+                        return data["result"], True
                     return data, True
                 elif isinstance(data, list):
                     return data, True
@@ -223,19 +225,19 @@ class TigerGraphMCPManager:
     def get_neighbors(self, source_type: str, source_id: str, edge_types: Optional[List[str]] = None) -> Tuple[Any, float, bool]:
         """Calls tigergraph__get_neighbors through MCP."""
         args = {
-            "source_node_type": source_type,
-            "source_node_id": source_id,
+            "vertex_type": source_type,
+            "vertex_id": str(source_id),
             "graph_name": config.TG_GRAPHNAME
         }
-        if edge_types:
-            args["edge_types"] = edge_types
+        if edge_types and len(edge_types) > 0:
+            args["edge_type"] = edge_types[0]
         return self.invoke_mcp_tool("tigergraph__get_neighbors", args)
 
     def get_node_edges(self, node_type: str, node_id: str) -> Tuple[Any, float, bool]:
         """Calls tigergraph__get_node_edges through MCP."""
         args = {
-            "node_type": node_type,
-            "node_id": node_id,
+            "vertex_type": node_type,
+            "vertex_id": str(node_id),
             "graph_name": config.TG_GRAPHNAME
         }
         return self.invoke_mcp_tool("tigergraph__get_node_edges", args)
@@ -243,8 +245,8 @@ class TigerGraphMCPManager:
     def add_node(self, node_type: str, node_id: str, attributes: Dict[str, Any]) -> Tuple[Any, float, bool]:
         """Calls tigergraph__add_node through MCP."""
         args = {
-            "node_type": node_type,
-            "node_id": node_id,
+            "vertex_type": node_type,
+            "vertex_id": str(node_id),
             "attributes": attributes,
             "graph_name": config.TG_GRAPHNAME
         }
@@ -254,10 +256,10 @@ class TigerGraphMCPManager:
         """Calls tigergraph__add_edge through MCP."""
         args = {
             "edge_type": edge_type,
-            "source_node_type": source_type,
-            "source_node_id": source_id,
-            "target_node_type": target_type,
-            "target_node_id": target_id,
+            "source_vertex_type": source_type,
+            "source_vertex_id": str(source_id),
+            "target_vertex_type": target_type,
+            "target_vertex_id": str(target_id),
             "attributes": attributes or {},
             "graph_name": config.TG_GRAPHNAME
         }

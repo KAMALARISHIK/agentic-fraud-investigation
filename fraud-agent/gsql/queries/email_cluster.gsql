@@ -6,11 +6,15 @@ CREATE OR REPLACE QUERY email_cluster(VERTEX<EmailDomain> target_domain, DATETIM
     SumAccum<INT> @@txn_count;
 
     Start = { target_domain };
-    Txns = SELECT t FROM Start:em <-(PURCHASER_EMAIL:e|RECIPIENT_EMAIL:e)- Transaction:t
-           WHERE t.ts >= start_ts AND t.ts <= end_ts
-           ACCUM @@txn_count += 1;
+    Txns1 = SELECT t FROM Start:em -(<PURCHASER_EMAIL:e)- Transaction:t
+            WHERE t.ts >= start_ts AND t.ts <= end_ts
+            ACCUM @@txn_count += 1;
+    Txns2 = SELECT t FROM Start:em -(<RECIPIENT_EMAIL:e)- Transaction:t
+            WHERE t.ts >= start_ts AND t.ts <= end_ts
+            ACCUM @@txn_count += 1;
 
-    Cards = SELECT c FROM Txns:t <-(MADE:e)- Card:c
+    Txns = Txns1 UNION Txns2;
+    Cards = SELECT c FROM Txns:t -(<MADE:e)- Card:c
             ACCUM @@cards_in_cluster += c;
 
     PRINT @@cards_in_cluster AS connected_cards,

@@ -24,7 +24,8 @@ def install_all_queries():
         logger.warning("No GSQL query files found to install.")
         return False
 
-    logger.info(f"Found {len(query_files)} query files to install onto {config.TG_GRAPHNAME}...")
+    graph_name = config.TG_GRAPHNAME or "FraudGraph"
+    logger.info(f"Found {len(query_files)} query files to install onto {graph_name}...")
     
     # 1. Add all queries to TigerGraph schema
     for q_file in query_files:
@@ -32,16 +33,18 @@ def install_all_queries():
         logger.info(f"Adding query '{q_name}'...")
         with open(q_file, "r", encoding="utf-8") as f:
             gsql_text = f.read()
+        adapted_text = gsql_text.replace("FraudGraph", graph_name)
         try:
-            res = manager.run_gsql(gsql_text)
+            res = manager.run_gsql(adapted_text)
             logger.info(f"Added {q_name}: {res}")
         except Exception as e:
             logger.error(f"Failed to add query {q_name}: {e}")
 
     # 2. Install all queries
-    logger.info("Compiling and installing all queries on TigerGraph (INSTALL QUERY ALL)...")
+    logger.info(f"Compiling and installing all queries on TigerGraph (INSTALL QUERY ALL for {graph_name})...")
     try:
-        res = manager.run_gsql("INSTALL QUERY ALL")
+        install_cmd = f"USE GRAPH {graph_name}\nINSTALL QUERY ALL"
+        res = manager.run_gsql(install_cmd)
         logger.info(f"Installation output: {res}")
         return True
     except Exception as e:

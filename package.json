@@ -1,0 +1,12 @@
+{
+  "name": "fraudsight-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FraudSight Agent: Graph-powered fraud investigation workspace",
+  "scripts": {
+    "dev": "npm --prefix FRONTEND run dev",
+    "build": "npm --prefix FRONTEND run build",
+    "start": "npm --prefix FRONTEND run dev",
+    "install:all": "npm --prefix FRONTEND install"
+  }
+}

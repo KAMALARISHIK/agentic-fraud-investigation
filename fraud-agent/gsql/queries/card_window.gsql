@@ -10,5 +10,5 @@ CREATE OR REPLACE QUERY card_window(VERTEX<Card> target_card, DATETIME start_ts,
            ACCUM @@edges += e
            ORDER BY t.ts ASC;
 
-    PRINT Txns[Txns.id, Txns.ts, Txns.amount, Txns.product_cd, Txns.channel, Txns.risk_score, Txns.addr1, Txns.device_new_found, Txns.proxy_type];
+    PRINT Txns;
 }

@@ -1,0 +1,45 @@
+# Environments & Secrets
+.env
+*.env
+.env.*
+!.env.example
+FRONTEND/.env
+FRONTEND/.env.*
+fraud-agent/.env
+fraud-agent/.env.*
+
+# Python Cache & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+venv/
+.venv/
+env/
+
+# Node / Frontend Build & Cache
+node_modules/
+dist/
+build/
+.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Datasets, Database Stores & Large Caches
+*.csv
+*.csv.csv
+*.parquet
+*.duckdb
+*.db
+embeddings_cache.json
+*.json.cache
+
+# IDE, OS & Scratch
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+scratch/
+scratch*.py
+

@@ -9,8 +9,8 @@ CREATE OR REPLACE QUERY out_of_region(VERTEX<Card> target_card, VERTEX<Transacti
     SumAccum<INT> @@home_txns_nearby;
 
     StartTxn = { target_txn };
-    SELECT t INTO T FROM StartTxn:t
-           ACCUM current_region = t.addr1, current_ts = t.ts;
+    Tx = SELECT t FROM StartTxn:t
+         ACCUM current_region = t.addr1, current_ts = t.ts;
 
     StartCard = { target_card };
     AllTxns = SELECT t FROM StartCard:c -(MADE:e)-> Transaction:t
@@ -31,8 +31,8 @@ CREATE OR REPLACE QUERY out_of_region(VERTEX<Card> target_card, VERTEX<Transacti
     END;
 
     // Check if home region transactions occur within +/- 48h
-    DATETIME start_win = datetime_add(current_ts, INTERVAL -48 HOUR);
-    DATETIME end_win = datetime_add(current_ts, INTERVAL 48 HOUR);
+    DATETIME start_win = epoch_to_datetime(datetime_to_epoch(current_ts) - 172800);
+    DATETIME end_win = epoch_to_datetime(datetime_to_epoch(current_ts) + 172800);
 
     NearbyHome = SELECT t FROM StartCard:c -(MADE:e)-> Transaction:t
                  WHERE t.addr1 == home_region AND t.ts >= start_win AND t.ts <= end_win

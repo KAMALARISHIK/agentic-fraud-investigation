@@ -88,18 +88,19 @@ def trigger_investigation(case_id: str, req: Optional[InvestigateRequest] = None
     else:
         # Load from case_pack.csv or existing case
         con = duckdb.connect(str(config.DUCKDB_PATH), read_only=True)
-        row = con.execute("SELECT * FROM case_pack_raw WHERE case_id = ?", [case_id]).fetchone()
+        rows = con.execute("SELECT * FROM case_pack_raw WHERE case_id = ?", [case_id]).df().to_dict(orient="records")
         con.close()
         
-        if row:
+        if rows:
+            row_dict = rows[0]
             alert = {
-                "case_id": str(row[0]),
-                "customer_id": str(row[1]),
-                "card_id": str(row[2]),
-                "flagged_txn_id": str(row[3]),
-                "trigger_type": str(row[4]),
-                "trigger_text": str(row[5]),
-                "risk_score": float(row[6])
+                "case_id": str(row_dict.get("case_id", case_id)),
+                "customer_id": str(row_dict.get("customer_id", "")),
+                "card_id": str(row_dict.get("card_id", "")),
+                "flagged_txn_id": str(row_dict.get("flagged_txn_id", "")),
+                "trigger_type": str(row_dict.get("trigger_type", "risk_score")),
+                "trigger_text": str(row_dict.get("trigger_text", "")),
+                "risk_score": float(row_dict.get("risk_score") or 0.85)
             }
         else:
             existing = load_case_data(case_id)
@@ -177,3 +178,29 @@ def submit_case_evidence(case_id: str, evidence: EvidenceSubmitRequest):
         "case_id": case_id,
         "reassessed_case": data
     }
+
+@router.get("/{case_id}/transactions", response_model=List[Dict[str, Any]])
+def get_case_transactions(case_id: str = FPath(..., description="The ID of the case, e.g. HHG-001")):
+    """Get all related transactions for the case cards from DuckDB."""
+    case_data = load_case_data(case_id)
+    case_obj = case_data.get("case", {})
+    connected_cards = case_obj.get("connected_card_ids", [])
+    if not connected_cards:
+        return []
+        
+    try:
+        con = duckdb.connect(str(config.DUCKDB_PATH), read_only=True)
+        placeholders = ", ".join(["?"] * len(connected_cards))
+        query = f"""
+            SELECT id as id, card_id, TransactionAmt as amount, TransactionDT as timestamp, isFraud as is_fraud, addr1 as location, DeviceInfo as device, product_cd as merchant_category, P_emaildomain as email
+            FROM transactions_trimmed
+            WHERE card_id IN ({placeholders})
+            ORDER BY TransactionDT DESC
+            LIMIT 100
+        """
+        rows = con.execute(query, connected_cards).df().to_dict(orient="records")
+        con.close()
+        return rows
+    except Exception as e:
+        logger.error(f"Error fetching transactions for case {case_id}: {e}")
+        return []

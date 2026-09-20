@@ -1,6 +1,5 @@
-<<<<<<< HEAD
-# 🛡️ Autonomous Enterprise Fraud Investigation Platform
-### TigerGraph Savanna Cloud (FraudGraph) × `tigergraph-mcp` × LangGraph × Google Gemini 3.6 Flash
+# 🛡️ FraudSight AI: Autonomous Enterprise Fraud Investigation Platform
+### TigerGraph Savanna Cloud (FraudGraph) × `tigergraph-mcp` × LangGraph × Google Gemini 3.6 Flash × React & Vite Frontend
 
 ---
 
@@ -20,7 +19,8 @@
 6. [Architecture & tigergraph-mcp Protocol Routing](#-6-architecture--tigergraph-mcp-protocol-routing)
 7. [Policy Rules (R1–R10) & Routing Engine Reference](#-7-policy-rules-r1r10--routing-engine-reference)
 8. [REST API Endpoints Reference](#-8-rest-api-endpoints-reference)
-9. [How to Safely Push to GitHub](#-9-how-to-safely-push-to-github)
+9. [Running Frontend & Backend (Exact Commands)](#-9-running-frontend--backend-exact-commands)
+10. [License & Acknowledgments](#-10-license--acknowledgments)
 
 ---
 
@@ -47,7 +47,9 @@ This repository contains the complete backend and autonomous engine for an **Ent
 | **Run Agent on 20 Cases** | `python scripts/run_all_cases.py` | Runs the LangGraph + MCP agent across all 20 alert cases |
 | **Run Historical Backtest** | `python scripts/backtest.py` | Evaluates agent precision/recall on historical closed cases |
 | **Run Innovation Extra** | `python scripts/run_autonomous_monitor.py` | Scans unflagged data to discover multi-account device fraud rings |
-| **Start REST API Server** | `uvicorn app.main:app --reload` | Starts FastAPI on `http://localhost:8000` (Swagger: `/docs`) |
+| **Start REST API Server** | `cd fraud-agent && uvicorn app.main:app --reload --port 8000` | Starts FastAPI on `http://localhost:8000` (Swagger: `/docs`) |
+| **Start Frontend UI** | `cd FRONTEND && npm install && npm run dev` | Starts Vite React frontend on `http://localhost:5173` |
+| **Build Frontend** | `cd FRONTEND && npm run build` | Builds production bundle into `FRONTEND/dist/` |
 | **Run Test Suite** | `pytest -q` | Executes all 28 unit & integration tests (100% pass) |
 
 ---
@@ -57,6 +59,13 @@ This repository contains the complete backend and autonomous engine for an **Ent
 ```text
 ├── cases/                     # 20 strictly validated exam answer files (HHG-001.json ... HHG-020.json)
 ├── cases_extra/               # Innovation Extra: Autonomous fraud ring cases (EXTRA-RING-001 ... 003)
+│
+├── FRONTEND/                  # Modern React 19 + Vite + Tailwind CSS Investigation Dashboard
+│   ├── src/
+│   │   ├── components/        # UI components, Graph Viewer, Timeline, Case Details, Action Modals
+│   │   ├── services/          # API client calling FastAPI backend (/cases, /graph, /timeline, etc.)
+│   │   └── types/             # TypeScript interfaces for Cases, Graph Nodes/Edges, Actions, Timeline
+│   └── package.json           # Frontend dependencies and Vite build scripts
 │
 ├── app/                       # FastAPI REST API Backend
 │   ├── main.py                # Server entrypoint with CORS, health check, and route mounting
@@ -110,6 +119,7 @@ This repository contains the complete backend and autonomous engine for an **Ent
 ├── API.md                     # Full REST API endpoint reference and cURL examples
 ├── DATA_MAPPING.md            # Mathematical proof of customer_id <-> card1 bijection
 ├── BLOG_DRAFT.md              # Technical blog post on GraphRAG & MCP architecture
+├── DATASET_README.md          # Original TigerGraph × Hacker House Goa Dataset Specification
 └── README.md                  # This master documentation file
 ```
 
@@ -322,7 +332,8 @@ The agent routes 100% of its graph interactions through official MCP stdio tools
 | `tigergraph__get_vertex_count` | System Health | Schema-level graph entity volume verification |
 
 ---
- 📜 7. Policy Rules (R1–R10) & Routing Engine Reference
+
+## 📜 7. Policy Rules (R1–R10) & Routing Engine Reference
 
 | Rule ID | Rule Name | Trigger Condition | Mandatory Actions & Routing |
 | :--- | :--- | :--- | :--- |
@@ -338,7 +349,8 @@ The agent routes 100% of its graph interactions through official MCP stdio tools
 | **R10** | Graph Memory Persistence | Every completed investigation and finding | Write `InvestigationCase` & `Finding` to TigerGraph (`auto`) |
 
 ---
- 🌐 8. REST API Endpoints Reference
+
+## 🌐 8. REST API Endpoints Reference
 
 See [API.md](file:///C:/GOA%20TIGER/API.md) for full request/response schemas and cURL examples.
 
@@ -358,31 +370,40 @@ See [API.md](file:///C:/GOA%20TIGER/API.md) for full request/response schemas an
 | `GET` | `/stats` | Operational performance metrics and token analytics |
 | `GET` | `/extra/scan` | Trigger Innovation Extra autonomous ring scan |
 | `GET` | `/extra/cases` | List all discovered extra fraud ring cases |
-📄 9. License & Acknowledgments
 
-- **Dataset**: IEEE-CIS Fraud Detection Dataset (Vesta Corporation).
+---
+
+## 🖥️ 9. Running Frontend & Backend (Exact Commands)
+
+### 1. Start the FastAPI Backend
+```powershell
+# From the project root or fraud-agent directory
+cd "c:\GOA TIGER\fraud-agent"
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+*Backend runs on `http://localhost:8000` with Swagger UI at `http://localhost:8000/docs`.*
+
+### 2. Start the Frontend Application
+```powershell
+# From the FRONTEND directory
+cd "c:\GOA TIGER\FRONTEND"
+npm install
+npm run dev
+```
+*Frontend runs on `http://localhost:5173`.*
+
+### 3. Demo Credentials
+- **Email**: `analyst@fraudsight.demo`
+- **Password**: `Demo@1234`
+
+---
+
+## 📄 10. License & Acknowledgments
+
+- **Dataset**: IEEE-CIS Fraud Detection Dataset (Vesta Corporation). See [DATASET_README.md](file:///C:/GOA%20TIGER/DATASET_README.md) for full dataset documentation.
 - **Graph Engine**: TigerGraph Savanna Cloud 4.2.5 (`FraudGraph`).
 - **Agent Framework**: LangGraph & `tigergraph-mcp` (Model Context Protocol).
 - **Language Model**: Google Gemini 3.6 Flash & `gemini-embedding-001`.
-=======
-# FraudSight AI: Agentic Fraud Investigation on TigerGraph
+- **Frontend**: React 19, Vite, Tailwind CSS v4, Lucide React, Recharts, Framer Motion.
 
-An AI agent that investigates suspicious card activity like a fraud analyst: it opens a case, gathers evidence from a TigerGraph knowledge graph, assesses risk and uncertainty, requests more evidence when needed, recommends the next best action within policy and approval limits, and stores the case in memory for future investigations.
 
-Built for the TigerGraph Agentic Fraud Investigation hackathon.
-
-## What it does
-- Investigates alerts triggered by a risk score, a customer report, or an analyst request
-- Finds fraud patterns using GSQL queries and graph algorithms (shared devices, small-authorization sequences, out-of-region use, connected-card rings)
-- Reaches the graph through TigerGraph MCP tools
-- Uses GraphRAG: connected graph evidence, policy text, and similar past cases are passed to the LLM
-- Enforces the bank's fraud policy in code: allowed actions, approval routes (auto / L1 / L2), and when a Suspicious Activity Report is required
-- Asks for more evidence (customer validation, step-up authentication) when the signals are uncertain, then updates its recommendation
-- Explains its reasoning and writes every case back to the graph
-
-## Tech stack
-TigerGraph Savanna, GSQL, TigerGraph MCP, LangGraph, Gemini, FastAPI, Python
-
-## Repository layout
-See the sections below for setup, architecture, and the API.
->>>>>>> 8043b0c0f860e8d69d1506d177dd62535d3ee58d

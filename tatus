@@ -1,0 +1,72 @@
+warning: in the working copy of 'fraud-agent/.env.example', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/API.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/agent/tools.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/app/main.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/app/routes/actions.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/app/routes/cases.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/app/routes/stats.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/app/schemas.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/config.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/data_loading/load_graph.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/gsql/create_schema.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/gsql/install_queries.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/gsql/queries/card_neighborhood_graph.gsql', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/gsql/queries/card_window.gsql', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/gsql/queries/community_detection.gsql', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/gsql/queries/device_neighbors.gsql', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/gsql/queries/email_cluster.gsql', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/gsql/queries/new_device_proxy.gsql', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/gsql/queries/out_of_region.gsql', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/gsql/queries/region_cluster.gsql', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/gsql/queries/similar_closed_cases.gsql', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/llm.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/mcp_client.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/scripts/check_connection.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'fraud-agent/tg_client.py', LF will be replaced by CRLF the next time Git touches it
+ README.md                                          |   56 [32m+[m[31m-[m
+ fraud-agent/.env.example                           |    3 [32m+[m[31m-[m
+ fraud-agent/API.md                                 |    6 [32m+[m[31m-[m
+ fraud-agent/agent/tools.py                         |   62 [32m+[m[31m-[m
+ fraud-agent/app/main.py                            |   47 [32m+[m[31m-[m
+ fraud-agent/app/routes/actions.py                  |   80 [32m+[m[31m-[m
+ fraud-agent/app/routes/cases.py                    |   45 [32m+[m[31m-[m
+ fraud-agent/app/routes/stats.py                    |   20 [32m+[m[31m-[m
+ fraud-agent/app/schemas.py                         |    4 [32m+[m
+ fraud-agent/cases/HHG-001.json                     |   19 [32m+[m[31m-[m
+ fraud-agent/cases/HHG-002.json                     |    6 [32m+[m[31m-[m
+ fraud-agent/cases/HHG-003.json                     |   54 [32m+[m[31m-[m
+ fraud-agent/cases/HHG-004.json                     |   81 [32m+[m[31m-[m
+ fraud-agent/cases/HHG-005.json                     |  130 [32m+[m[31m-[m
+ fraud-agent/cases/HHG-006.json                     | 1711 [32m+[m[31m-------------------[m
+ fraud-agent/cases/HHG-007.json                     |   44 [32m+[m[31m-[m
+ fraud-agent/cases/HHG-008.json                     |  238 [32m+[m[31m--[m
+ fraud-agent/cases/HHG-009.json                     |   60 [32m+[m[31m-[m
+ fraud-agent/cases/HHG-010.json                     |  718 [32m+[m[31m-------[m
+ fraud-agent/cases/HHG-011.json                     |   71 [32m+[m[31m-[m
+ fraud-agent/cases/HHG-012.json                     |   10 [32m+[m[31m-[m
+ fraud-agent/cases/HHG-013.json                     |  272 [32m+[m[31m---[m
+ fraud-agent/cases/HHG-014.json                     |  187 [32m+[m[31m--[m
+ fraud-agent/cases/HHG-015.json                     |  118 [32m+[m[31m-[m
+ fraud-agent/cases/HHG-016.json                     |  224 [32m+[m[31m--[m
+ fraud-agent/cases/HHG-017.json                     |  317 [32m+[m[31m---[m
+ fraud-agent/cases/HHG-018.json                     |   60 [32m+[m[31m-[m
+ fraud-agent/cases/HHG-019.json                     |   58 [32m+[m[31m-[m
+ fraud-agent/cases/HHG-020.json                     |  856 [32m+[m[31m---------[m
+ fraud-agent/config.py                              |    3 [32m+[m[31m-[m
+ fraud-agent/data_loading/load_graph.py             |   12 [32m+[m[31m-[m
+ fraud-agent/gsql/create_schema.py                  |   21 [32m+[m[31m-[m
+ fraud-agent/gsql/install_queries.py                |   11 [32m+[m[31m-[m
+ .../gsql/queries/card_neighborhood_graph.gsql      |    2 [32m+[m[31m-[m
+ fraud-agent/gsql/queries/card_window.gsql          |    2 [32m+[m[31m-[m
+ fraud-agent/gsql/queries/community_detection.gsql  |    6 [32m+[m[31m-[m
+ fraud-agent/gsql/queries/device_neighbors.gsql     |    6 [32m+[m[31m-[m
+ fraud-agent/gsql/queries/email_cluster.gsql        |   12 [32m+[m[31m-[m
+ fraud-agent/gsql/queries/new_device_proxy.gsql     |    6 [32m+[m[31m-[m
+ fraud-agent/gsql/queries/out_of_region.gsql        |    8 [32m+[m[31m-[m
+ fraud-agent/gsql/queries/region_cluster.gsql       |    4 [32m+[m[31m-[m
+ fraud-agent/gsql/queries/similar_closed_cases.gsql |   11 [32m+[m[31m-[m
+ fraud-agent/llm.py                                 |   11 [32m+[m[31m-[m
+ fraud-agent/mcp_client.py                          |   26 [32m+[m[31m-[m
+ fraud-agent/scripts/check_connection.py            |    8 [32m+[m[31m-[m
+ fraud-agent/tg_client.py                           |    6 [32m+[m[31m-[m
+ 46 files changed, 843 insertions(+), 4869 deletions(-)

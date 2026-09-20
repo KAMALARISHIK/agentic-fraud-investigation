@@ -3,44 +3,31 @@
   "case": {
     "status": "closed_fraud",
     "verdict": "fraud",
-    "fraud_probability": 0.95,
-    "pattern": "undocumented",
-    "pattern_description": "Coordinated multi-account compromise operating across a shared device profile and browser fingerprint targeting diverse card issuers simultaneously.",
+    "fraud_probability": 0.94,
+    "pattern": "card_not_present_fraud",
+    "pattern_description": "",
     "affected_txn_ids": [
       "3583227"
     ],
     "first_suspicious_txn_id": "3583227",
-    "connected_card_ids": [
-      "C04248-K1",
-      "C02222-K1",
-      "C05031-K1",
-      "C03095-K1",
-      "C07518-K1"
-    ],
-    "connected_device_profiles": [
-      "Unknown Device | Unknown OS | firefox 47.0 | Unknown Screen"
-    ],
-    "exposure_usd": 128.33,
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 100.0,
     "evidence": [
       {
-        "claim": "Device profile shared across 5 other cardholder accounts during active investigation window",
-        "source": "graph",
-        "ref": "query:device_neighbors",
+        "claim": "Customer reported unrecognized online charge; purchase deviates from typical spending categories",
+        "source": "customer",
+        "ref": "case_pack:customer_report",
         "entity_ids": [
-          "C04248-K1",
-          "C02222-K1",
-          "C05031-K1",
-          "C03095-K1",
-          "C07518-K1",
           "3583227"
         ]
       }
     ],
     "similar_prior_cases": [
-      "CC-2649",
-      "CC-2971"
+      "CC-0001",
+      "CC-0007"
     ],
-    "summary": "Coordinated compromise detected linking card C08106-K1 with 5 other accounts via shared device fingerprint. Total exposure: $128.33. SAR filing and connected monitoring initiated.",
+    "summary": "Confirmed unauthorized activity (card not present fraud) on card C08106-K1. Cardholder denied purchase. Total exposure: $100.00. Card blocked for customer protection.",
     "written_to_graph": true,
     "graph_case_id": "CASE-HHG-004"
   },
@@ -68,47 +55,27 @@
       {
         "action": "BLOCK_CARD",
         "route": "L1",
-        "reason": "R2: Customer denied activity; exposure $128.33 (L1 approval)"
+        "reason": "R2: Customer denied activity; exposure $100.00 (L1 approval)",
+        "status": "APPROVED"
       },
       {
         "action": "CREATE_CASE",
         "route": "auto",
         "reason": "R2: Internal fraud case opened with evidence graph attached"
-      },
-      {
-        "action": "FILE_REPORT",
-        "route": "L2",
-        "reason": "R9: Undocumented coordinated fraud pattern identified"
-      },
-      {
-        "action": "MONITOR_CONNECTED_CARDS",
-        "route": "auto",
-        "reason": "R6: Placed all cards sharing compromise origin under heightened monitoring"
       }
     ],
-    "what_changed": "Customer denial confirmed compromise, elevating probability to 0.95 and triggering BLOCK_CARD and internal case creation."
+    "what_changed": "Customer denial confirmed compromise, elevating probability to 0.94 and triggering BLOCK_CARD and internal case creation."
   },
   "sar": {
-    "file": true,
-    "reason": "R9: Undocumented coordinated fraud pattern identified",
-    "narrative": "During the period from 2016-12-29 to 2016-12-29, suspicious unauthorized card transactions totaling $128.33 were identified on card C08106-K1 belonging to customer C08106. The activity exhibited characteristics consistent with undocumented. Investigation of the associated transaction network revealed connections to device profile Unknown Device | Unknown OS | firefox 47.0 | Unknown Screen and additional accounts ['C04248-K1', 'C02222-K1', 'C05031-K1', 'C03095-K1', 'C07518-K1']. The cardholder confirmed that they did not authorize the charges and maintained possession of their card. The sequence and Velocity of transactions demonstrate an organized attempt to exploit compromised account credentials. The bank has declined all pending charges, blocked card C08106-K1 for reissue, and placed connected accounts under enhanced monitoring.",
-    "subjects": [
-      "C08106",
-      "C08106-K1",
-      "C04248-K1",
-      "C02222-K1",
-      "C05031-K1",
-      "C03095-K1",
-      "C07518-K1"
-    ],
-    "total_amount_usd": 128.33,
-    "activity_dates": [
-      "2016-12-29",
-      "2016-12-29"
-    ]
+    "file": false,
+    "reason": "Policy threshold not met: confirmed loss under $1,000 and isolated to single account",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0.0,
+    "activity_dates": []
   },
   "stop_reason": "Defensible decision reached with corroborating evidence and verification; card protected and SAR generated.",
-  "tool_calls": 8,
-  "tokens": 350,
-  "latency_s": 39.84
+  "tool_calls": 7,
+  "tokens": 0,
+  "latency_s": 53.38
 }

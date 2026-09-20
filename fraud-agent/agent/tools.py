@@ -66,11 +66,16 @@ class FraudInvestigationTools:
         res, duration, success = self.mcp.run_installed_query("card_window", params)
         self._log_call("tigergraph__run_installed_query", "card_window", params, duration, success)
 
-        if success and res and len(res) > 0:
-            if isinstance(res[0], dict) and "Txns" in res[0]:
-                return res[0]["Txns"]
-            elif isinstance(res, list):
+        if success and res:
+            if isinstance(res, list) and len(res) > 0:
+                if isinstance(res[0], dict) and "Txns" in res[0]:
+                    return res[0]["Txns"]
                 return res
+            elif isinstance(res, dict):
+                if "Txns" in res:
+                    return res["Txns"]
+                if "result" in res and isinstance(res["result"], list):
+                    return res["result"]
 
         # Analytical fallback
         con = self._get_duckdb_conn()
@@ -91,8 +96,11 @@ class FraudInvestigationTools:
         res, duration, success = self.mcp.run_installed_query("customer_baseline", params)
         self._log_call("tigergraph__run_installed_query", "customer_baseline", params, duration, success)
 
-        if success and res and len(res) > 0:
-            return res[0]
+        if success and res:
+            if isinstance(res, list) and len(res) > 0:
+                return res[0]
+            elif isinstance(res, dict):
+                return res
 
         con = self._get_duckdb_conn()
         stats = con.execute(f"""
@@ -116,8 +124,11 @@ class FraudInvestigationTools:
         res, duration, success = self.mcp.run_installed_query("small_auth_sequence", params)
         self._log_call("tigergraph__run_installed_query", "small_auth_sequence", params, duration, success)
 
-        if success and res and len(res) > 0:
-            return res[0]
+        if success and res:
+            if isinstance(res, list) and len(res) > 0:
+                return res[0]
+            elif isinstance(res, dict):
+                return res
 
         con = self._get_duckdb_conn()
         cust_id = card_id.split("-")[0]
@@ -149,8 +160,11 @@ class FraudInvestigationTools:
         res, duration, success = self.mcp.run_installed_query("new_device_proxy", params)
         self._log_call("tigergraph__run_installed_query", "new_device_proxy", params, duration, success)
 
-        if success and res and len(res) > 0:
-            return res[0]
+        if success and res:
+            if isinstance(res, list) and len(res) > 0:
+                return res[0]
+            elif isinstance(res, dict):
+                return res
 
         con = self._get_duckdb_conn()
         row = con.execute(f"""
@@ -177,8 +191,11 @@ class FraudInvestigationTools:
         res, duration, success = self.mcp.run_installed_query("out_of_region", params)
         self._log_call("tigergraph__run_installed_query", "out_of_region", params, duration, success)
 
-        if success and res and len(res) > 0:
-            return res[0]
+        if success and res:
+            if isinstance(res, list) and len(res) > 0:
+                return res[0]
+            elif isinstance(res, dict):
+                return res
 
         con = self._get_duckdb_conn()
         cust_id = card_id.split("-")[0]
@@ -217,8 +234,11 @@ class FraudInvestigationTools:
         res, duration, success = self.mcp.run_installed_query("device_neighbors", params)
         self._log_call("tigergraph__run_installed_query", "device_neighbors", params, duration, success)
 
-        if success and res and len(res) > 0:
-            return res[0]
+        if success and res:
+            if isinstance(res, list) and len(res) > 0:
+                return res[0]
+            elif isinstance(res, dict):
+                return res
 
         con = self._get_duckdb_conn()
         rows = con.execute(f"""
@@ -243,8 +263,11 @@ class FraudInvestigationTools:
         res, duration, success = self.mcp.run_installed_query("recurring_charge", params)
         self._log_call("tigergraph__run_installed_query", "recurring_charge", params, duration, success)
 
-        if success and res and len(res) > 0:
-            return res[0]
+        if success and res:
+            if isinstance(res, list) and len(res) > 0:
+                return res[0]
+            elif isinstance(res, dict):
+                return res
 
         con = self._get_duckdb_conn()
         cust_id = card_id.split("-")[0]
@@ -269,8 +292,11 @@ class FraudInvestigationTools:
         res, duration, success = self.mcp.run_installed_query("similar_closed_cases", params)
         self._log_call("tigergraph__run_installed_query", "similar_closed_cases", params, duration, success)
 
-        if success and res and len(res) > 0:
-            return res
+        if success and res:
+            if isinstance(res, list):
+                return res
+            elif isinstance(res, dict) and "result" in res:
+                return res["result"]
 
         con = self._get_duckdb_conn()
         where_clause = f"WHERE pattern = '{pattern_hint}'" if pattern_hint and pattern_hint != "none" else ""

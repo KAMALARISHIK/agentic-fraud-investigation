@@ -7,14 +7,14 @@ CREATE OR REPLACE QUERY device_neighbors(VERTEX<DeviceProfile> target_device, DA
     ListAccum<VERTEX<Transaction>> @@related_txns;
 
     Start = { target_device };
-    Txns = SELECT t FROM Start:d <-(FROM_DEVICE:e)- Transaction:t
+    Txns = SELECT t FROM Start:d -(<FROM_DEVICE:e)- Transaction:t
            WHERE t.ts >= start_ts AND t.ts <= end_ts
            ACCUM @@related_txns += t;
 
-    Cards = SELECT c FROM Txns:t <-(MADE:e)- Card:c
+    Cards = SELECT c FROM Txns:t -(<MADE:e)- Card:c
             ACCUM @@connected_cards += c;
 
-    Custs = SELECT cust FROM Cards:c <-(OWNS:e)- Customer:cust
+    Custs = SELECT cust FROM Cards:c -(OWNS:e)- Customer:cust
             ACCUM @@connected_customers += cust;
 
     PRINT @@connected_cards AS connected_cards,

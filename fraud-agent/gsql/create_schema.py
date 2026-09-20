@@ -26,10 +26,27 @@ def create_schema():
         logger.warning("TigerGraph is not connected. Please ensure TG_HOST, TG_SECRET or TG_USERNAME/TG_PASSWORD in .env are set and the workspace is active.")
         return False
 
-    logger.info("Applying FraudGraph schema to TigerGraph...")
+    graph_name = config.TG_GRAPHNAME or "FraudGraph"
+    logger.info(f"Checking if graph '{graph_name}' exists...")
     try:
-        res = manager.run_gsql(schema_gsql)
+        ls_res = manager.run_gsql("ls")
+        if f"Graph {graph_name}" not in ls_res:
+            logger.info(f"Graph '{graph_name}' not found. Creating graph '{graph_name}'...")
+            create_graph_res = manager.run_gsql(f"CREATE GRAPH {graph_name}()")
+            logger.info(f"Graph created: {create_graph_res}")
+        else:
+            logger.info(f"Graph '{graph_name}' already exists.")
+    except Exception as e:
+        logger.warning(f"Note during graph check/creation: {e}")
+
+    logger.info(f"Applying schema to TigerGraph graph '{graph_name}' from {schema_path}...")
+    try:
+        adapted_gsql = schema_gsql.replace("FraudGraph", graph_name)
+        res = manager.run_gsql(adapted_gsql)
         logger.info(f"Schema applied successfully: {res}")
+        if "Error:" in res or "error" in res.lower():
+            logger.error(f"GSQL error occurred: {res}")
+            return False
         return True
     except Exception as e:
         logger.error(f"Error applying schema: {e}")

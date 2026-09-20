@@ -9,17 +9,19 @@ import config
 from tg_client import get_tg_connection
 from llm import get_genai_client, generate_text
 
-def check_tigergraph() -> bool:
+def check_tigergraph(max_retries: int = 15, initial_delay: float = 3.0) -> bool:
     try:
         if not config.TG_HOST:
+            print("TG_HOST is not set in environment.")
             return False
-        conn = get_tg_connection(max_retries=3, initial_delay=1.0)
+        conn = get_tg_connection(max_retries=max_retries, initial_delay=initial_delay, backoff_factor=1.3, max_delay=15.0)
         if conn is None:
             return False
         # Test echo
         conn.echo()
         return True
-    except Exception:
+    except Exception as e:
+        print(f"TigerGraph check error: {e}")
         return False
 
 def check_gemini() -> bool:

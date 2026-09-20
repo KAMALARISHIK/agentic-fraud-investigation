@@ -46,12 +46,22 @@ def get_operational_stats():
                 
             total_latency += float(data.get("latency_s", 0.0))
             
-            toks = data.get("tokens", {})
-            total_tokens += int(toks.get("total", 0))
+            toks = data.get("tokens", 0)
+            if isinstance(toks, dict):
+                total_tokens += int(toks.get("total", 0))
+            elif isinstance(toks, (int, float)):
+                total_tokens += int(toks)
             
-            for tc in data.get("tool_calls", []):
-                tool_name = tc.get("tool", "unknown")
-                tool_counts[tool_name] += 1
+            tool_calls_data = data.get("tool_calls", [])
+            if isinstance(tool_calls_data, list):
+                for tc in tool_calls_data:
+                    if isinstance(tc, dict):
+                        tool_name = tc.get("tool", "unknown")
+                        tool_counts[tool_name] += 1
+                    elif isinstance(tc, str):
+                        tool_counts[tc] += 1
+            elif isinstance(tool_calls_data, (int, float)):
+                tool_counts["mcp_graph_tools"] += int(tool_calls_data)
                 
         except Exception as e:
             logger.error(f"Error reading stats for {file_path.name}: {e}")

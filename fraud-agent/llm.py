@@ -75,7 +75,9 @@ def generate_embeddings_batch(
         return [[0.0] * 768 for _ in texts]
 
     model_name = model or config.GEMINI_EMBED_MODEL
-    try:
+    import concurrent.futures
+
+    def _call():
         response = client.models.embed_content(
             model=model_name,
             contents=texts,
@@ -88,6 +90,11 @@ def generate_embeddings_batch(
         elif hasattr(response, 'embedding') and response.embedding:
             return [response.embedding.values]
         return [[0.0] * 768 for _ in texts]
+
+    try:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(_call)
+            return future.result(timeout=5.0)
     except Exception as e:
-        logger.error(f"Gemini batch embed_content error: {e}")
+        logger.warning(f"Gemini batch embed_content error/timeout: {e}")
         return [[0.0] * 768 for _ in texts]

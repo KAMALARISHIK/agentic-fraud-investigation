@@ -10,12 +10,12 @@ CREATE OR REPLACE QUERY new_device_proxy(VERTEX<Transaction> target_txn) FOR GRA
     Dev = SELECT d FROM Start:t -(FROM_DEVICE:e)-> DeviceProfile:d
           ACCUM
               IF t.device_new_found == "New" THEN
-                  @@is_new_device = true
+                  @@is_new_device += true
               END,
               IF t.proxy_type == "anonymous" OR t.proxy_type == "hidden" THEN
-                  @@is_proxy = true
+                  @@is_proxy += true
               END,
-              @@device_details += d.id;
+              @@device_details += d.device_info;
 
     PRINT @@is_new_device AS is_new_device,
           @@is_proxy AS is_proxy,

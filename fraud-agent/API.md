@@ -4,7 +4,8 @@ The **Agentic Fraud Investigation API** is a high-performance FastAPI service pr
 
 **Base URL**: `http://localhost:8000`  
 **Interactive Swagger UI**: `http://localhost:8000/docs`  
-**OpenAPI Specification**: `http://localhost:8000/openapi.json`
+**OpenAPI Specification**: `http://localhost:8000/openapi.json`  
+**CORS Allowed Origins**: `http://localhost:8443`, `http://127.0.0.1:8443`, `http://localhost:5173`, `http://localhost:3000`
 
 ---
 
@@ -19,9 +20,12 @@ The **Agentic Fraud Investigation API** is a high-performance FastAPI service pr
 | `POST` | `/cases/{case_id}/evidence` | Submit customer verification and run policy reassessment |
 | `GET` | `/cases/{case_id}/timeline` | Detailed audit log with rule triggers and tool calls |
 | `GET` | `/cases/{case_id}/graph` | Graph nodes & edges for visual graph exploration |
+| `GET` | `/cases/{case_id}/transactions` | List all transaction records for case cards |
 | `GET` | `/cases/{case_id}/similar` | Vector similarity match against historical closed cases |
 | `POST` | `/cases/{case_id}/actions/{action_id}/approve` | Approve human-routed analyst action (`L1`/`L2`) |
 | `POST` | `/cases/{case_id}/actions/{action_id}/reject` | Reject human-routed analyst action |
+| `GET` | `/actions/pending` | List all pending human-in-the-loop (`L1`/`L2`) actions across cases |
+| `GET` | `/actions/history` | List all decided (approved/rejected) analyst actions |
 | `GET` | `/memory/patterns` | Catalog of recognized fraud typologies and policy rules |
 | `GET` | `/stats` | Operational performance metrics and token analytics |
 

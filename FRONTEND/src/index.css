@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-cream: #FAF9F5;
+    --surface-white: #FFFFFF;
+    --text-primary: #141413;
+    --text-muted: #6B6A65;
+    --border-hairline: #E8E6DC;
+    --accent-terracotta: #D97757;
+    --accent-hover: #C4623F;
+    --accent-soft: #F5E6DF;
+    
+    --status-fraud-text: #C0392B;
+    --status-fraud-bg: #FBEAE7;
+    --status-uncertain-text: #B7791F;
+    --status-uncertain-bg: #FBF1DC;
+    --status-legit-text: #2F855A;
+    --status-legit-bg: #E6F4EA;
+    --status-neutral-text: #6B6A65;
+    --status-neutral-bg: #F0EFEB;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #FAF9F5;
+    color: #141413;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, .font-serif-heading {
+    font-family: 'Newsreader', Georgia, serif;
+    font-feature-settings: "pnum" 1, "onum" 1;
+  }
+}
+
+/* Custom utility classes */
+.font-serif {
+  font-family: 'Newsreader', Georgia, serif;
+}
+
+.font-sans {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.bg-cream {
+  background-color: #FAF9F5;
+}
+
+.bg-surface {
+  background-color: #FFFFFF;
+}
+
+.border-hairline {
+  border-color: #E8E6DC;
+}
+
+.text-terracotta {
+  color: #D97757;
+}
+
+.bg-terracotta {
+  background-color: #D97757;
+}
+
+.bg-terracotta-soft {
+  background-color: #F5E6DF;
+}
+
+/* Custom Scrollbar for elegant feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF9F5;
+}
+::-webkit-scrollbar-thumb {
+  background: #D5D3C8;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B8B5A8;
+}

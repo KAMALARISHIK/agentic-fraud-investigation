@@ -11,6 +11,7 @@ sys.path.insert(0, str(BASE_DIR))
 import config
 import duckdb
 from tg_client import TigerGraphManager
+from data_loading.embed_docs import embed_and_load_docs
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("fraud_agent.load_graph")
@@ -28,15 +29,20 @@ def batch_upsert_edges(conn, source_type: str, edge_type: str, target_type: str,
         except Exception as e:
             logger.warning(f"Error upserting edge batch {edge_type}: {e}")
 
-def load_graph():
+def load_graph(limit_transactions: Optional[int] = None):
     """
     Idempotently loads the fraud investigation graph into TigerGraph.
     Focuses on case pack entities, historical closed cases, and connected transaction neighborhoods.
+    If limit_transactions is specified, loads up to that many transactions as a test batch.
     """
     manager = TigerGraphManager()
     if not manager.is_connected():
         logger.error("TigerGraph is not connected. Aborting graph load.")
         return False
+
+    # 0. Load Policy chunks & embeddings cache
+    logger.info("Ensuring policy chunks and vectors are loaded into TigerGraph...")
+    embed_and_load_docs()
 
     conn = manager.conn
     con = duckdb.connect(str(config.DUCKDB_PATH))
@@ -198,12 +204,14 @@ def load_graph():
 
     # F. Transactions & Graph Edges
     logger.info("Loading Transactions and relational edges...")
-    txns = con.execute("""
+    limit_clause = f"LIMIT {limit_transactions}" if limit_transactions else ""
+    txns = con.execute(f"""
         SELECT id, ts, amount, product_cd, channel, risk_score, dist1, addr1, addr2, 
                p_emaildomain, r_emaildomain, device_new_found, proxy_type, 
                c1, c2, c13, d1, d15, m4, v_features_sum, customer_id, device_profile_id
         FROM selected_transactions
         ORDER BY customer_id, ts
+        {limit_clause}
     """).fetchall()
 
     logger.info(f"Uploading {len(txns)} transactions to TigerGraph in batches of {BATCH_SIZE}...")

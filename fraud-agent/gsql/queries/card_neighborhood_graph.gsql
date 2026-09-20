@@ -9,7 +9,7 @@ CREATE OR REPLACE QUERY card_neighborhood_graph(VERTEX<Card> target_card) FOR GR
     @@nodes += target_card;
 
     // 1. Customer
-    Cust = SELECT cust FROM Start:c <-(OWNS:e)- Customer:cust
+    Cust = SELECT cust FROM Start:c -(OWNS:e)- Customer:cust
            ACCUM @@nodes += cust, @@edges += e;
 
     // 2. Recent Transactions (limit 50)
