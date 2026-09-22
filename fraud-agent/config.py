@@ -23,8 +23,9 @@ GEMINI_EMBED_MODEL = os.getenv("GEMINI_EMBED_MODEL", "gemini-embedding-001")
 TG_API_TOKEN = os.getenv("TG_API_TOKEN", "")
 
 # Paths
+REPO_ROOT = BASE_DIR.parent
 DATA_DIR = BASE_DIR
-CASES_OUTPUT_DIR = BASE_DIR / "cases"
+CASES_OUTPUT_DIR = (REPO_ROOT / "cases") if (REPO_ROOT / "cases").exists() else (BASE_DIR / "cases")
 DUCKDB_PATH = BASE_DIR / "fraud_data.duckdb"
 PARQUET_PATH = BASE_DIR / "transactions.parquet"
 EMBEDDINGS_CACHE_PATH = BASE_DIR / "embeddings_cache.json"

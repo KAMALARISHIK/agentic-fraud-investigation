@@ -78,7 +78,7 @@ export const OverviewPage: React.FC = () => {
           cases.length) *
           100
       )
-    : 92;
+    : 0;
 
   // Chart Data: Verdict Distribution
   const verdictChartData = [

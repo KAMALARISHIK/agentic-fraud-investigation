@@ -184,22 +184,86 @@ def get_case_transactions(case_id: str = FPath(..., description="The ID of the c
     """Get all related transactions for the case cards from DuckDB."""
     case_data = load_case_data(case_id)
     case_obj = case_data.get("case", {})
-    connected_cards = case_obj.get("connected_card_ids", [])
-    if not connected_cards:
-        return []
+    connected_cards = list(case_obj.get("connected_card_ids", []))
+    
+    customer_ids = set()
+    txn_ids = set()
+    
+    for c in connected_cards:
+        customer_ids.add(c.split("-K")[0])
         
+    for tid in case_obj.get("affected_txn_ids", []):
+        try:
+            txn_ids.add(int(tid))
+        except (ValueError, TypeError):
+            pass
+            
+    first_suspicious = case_obj.get("first_suspicious_txn_id")
+    if first_suspicious:
+        try:
+            txn_ids.add(int(first_suspicious))
+        except (ValueError, TypeError):
+            pass
+            
+    for ev in case_obj.get("evidence", []):
+        if isinstance(ev, dict):
+            for ent in ev.get("entity_ids", []):
+                try:
+                    txn_ids.add(int(ent))
+                except (ValueError, TypeError):
+                    pass
+                    
     try:
         con = duckdb.connect(str(config.DUCKDB_PATH), read_only=True)
-        placeholders = ", ".join(["?"] * len(connected_cards))
+        # Check case_pack_raw for additional context
+        cp_rows = con.execute("SELECT customer_id, card_id, flagged_txn_id FROM case_pack_raw WHERE case_id = ?", [case_id]).fetchall()
+        for row in cp_rows:
+            if row[0]:
+                customer_ids.add(str(row[0]))
+            if row[2]:
+                try:
+                    txn_ids.add(int(row[2]))
+                except (ValueError, TypeError):
+                    pass
+                    
+        conditions = []
+        params = []
+        if customer_ids:
+            ph = ", ".join(["?"] * len(customer_ids))
+            conditions.append(f"customer_id IN ({ph})")
+            params.extend(list(customer_ids))
+        if txn_ids:
+            ph = ", ".join(["?"] * len(txn_ids))
+            conditions.append(f"id IN ({ph})")
+            params.extend(list(txn_ids))
+            
+        if not conditions:
+            con.close()
+            return []
+            
+        where_clause = " OR ".join(conditions)
         query = f"""
-            SELECT id as id, card_id, TransactionAmt as amount, TransactionDT as timestamp, isFraud as is_fraud, addr1 as location, DeviceInfo as device, product_cd as merchant_category, P_emaildomain as email
+            SELECT 
+                id,
+                customer_id || '-K1' as card_id,
+                amount,
+                epoch(ts) as timestamp,
+                CASE WHEN risk_score > 0.5 THEN 1 ELSE 0 END as is_fraud,
+                coalesce(addr1, '') as location,
+                coalesce(device_info, os, 'Desktop/Mobile') as device,
+                product_cd as merchant_category,
+                coalesce(p_emaildomain, '') as email
             FROM transactions_trimmed
-            WHERE card_id IN ({placeholders})
-            ORDER BY TransactionDT DESC
+            WHERE {where_clause}
+            ORDER BY ts DESC
             LIMIT 100
         """
-        rows = con.execute(query, connected_cards).df().to_dict(orient="records")
+        rows = con.execute(query, params).df().to_dict(orient="records")
         con.close()
+        for r in rows:
+            for k, v in r.items():
+                if isinstance(v, float) and (v != v):
+                    r[k] = None
         return rows
     except Exception as e:
         logger.error(f"Error fetching transactions for case {case_id}: {e}")

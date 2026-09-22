@@ -850,13 +850,15 @@ ${sar.narrative || 'No narrative generated.'}
                 <div>
                   <span className="text-[#6B6A65] block">Activity Period:</span>
                   <span className="font-semibold text-[#141413]">
-                    {(sarObj.activity_dates || ['2017-12-01', '2017-12-02']).join(' to ')}
+                    {sarObj.activity_dates && sarObj.activity_dates.length > 0
+                      ? sarObj.activity_dates.join(' to ')
+                      : 'N/A'}
                   </span>
                 </div>
                 <div>
                   <span className="text-[#6B6A65] block">Identified Subjects:</span>
                   <span className="font-semibold text-[#141413]">
-                    {(sarObj.subjects || []).length || 1} entities
+                    {(sarObj.subjects || []).length} entities
                   </span>
                 </div>
               </div>
@@ -864,8 +866,7 @@ ${sar.narrative || 'No narrative generated.'}
               <div>
                 <h4 className="text-xs font-semibold text-[#141413] mb-2">Narrative Report</h4>
                 <div className="p-5 rounded-xl bg-[#FAF9F5] border border-[#E8E6DC] font-mono text-xs text-[#141413] whitespace-pre-wrap leading-relaxed">
-                  {sarObj.narrative ||
-                    `A suspicious activity investigation was conducted regarding case ${caseId}. Graph traversal confirmed coordinated multi-card velocity exceeding policy thresholds.`}
+                  {sarObj.narrative || 'No narrative provided.'}
                 </div>
               </div>
             </div>
@@ -901,14 +902,14 @@ ${sar.narrative || 'No narrative generated.'}
                   <div className="flex items-center justify-between">
                     <span className="font-mono font-bold text-xs text-[#141413]">{sc.case_id}</span>
                     <Badge variant="neutral" size="sm">
-                      {Math.round((sc.similarity_score || 0.88) * 100)}% Match
+                      {sc.similarity_score !== undefined ? `${Math.round(sc.similarity_score * 100)}% Match` : 'Match'}
                     </Badge>
                   </div>
                   <div className="text-xs text-[#6B6A65] capitalize">
-                    Pattern: <strong className="text-[#141413]">{sc.pattern || 'card_fraud'}</strong>
+                    Pattern: <strong className="text-[#141413]">{sc.pattern ? sc.pattern.replace(/_/g, ' ') : 'N/A'}</strong>
                   </div>
                   <div className="text-xs text-[#6B6A65]">
-                    Outcome: <strong className="text-[#141413]">{sc.outcome || 'confirmed_fraud'}</strong>
+                    Outcome: <strong className="text-[#141413]">{sc.outcome || 'N/A'}</strong>
                   </div>
                 </div>
               ))

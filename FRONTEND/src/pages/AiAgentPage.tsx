@@ -109,7 +109,7 @@ export const AiAgentPage: React.FC = () => {
             <Clock className="w-4 h-4 text-[#D97757]" />
           </div>
           <div className="text-2xl font-serif font-bold text-[#141413]">
-            {stats?.avg_latency_s || (caseDetail?.latency_s ? caseDetail.latency_s.toFixed(2) : 4.8)}s
+            {stats?.avg_latency_s !== undefined ? `${stats.avg_latency_s}s` : caseDetail?.latency_s ? `${caseDetail.latency_s.toFixed(2)}s` : '0s'}
           </div>
           <div className="text-[11px] text-[#6B6A65] mt-1">Per complete investigation</div>
         </Card>
@@ -120,7 +120,7 @@ export const AiAgentPage: React.FC = () => {
             <Cpu className="w-4 h-4 text-[#2B6CB0]" />
           </div>
           <div className="text-2xl font-serif font-bold text-[#141413]">
-            {stats?.total_tokens_used?.toLocaleString() || '68,420'}
+            {stats?.total_tokens_used !== undefined ? stats.total_tokens_used.toLocaleString() : '0'}
           </div>
           <div className="text-[11px] text-[#6B6A65] mt-1">Prompt & reasoning tokens</div>
         </Card>
@@ -131,7 +131,7 @@ export const AiAgentPage: React.FC = () => {
             <Zap className="w-4 h-4 text-[#B7791F]" />
           </div>
           <div className="text-2xl font-serif font-bold text-[#141413]">
-            {stats?.tool_calls_breakdown?.mcp_graph_tools || 140}
+            {stats?.tool_calls_breakdown ? Object.values(stats.tool_calls_breakdown).reduce((a, b) => a + b, 0) : 0}
           </div>
           <div className="text-[11px] text-[#6B6A65] mt-1">GSQL queries & neighbor traversals</div>
         </Card>
@@ -142,7 +142,7 @@ export const AiAgentPage: React.FC = () => {
             <ShieldAlert className="w-4 h-4 text-[#C0392B]" />
           </div>
           <div className="text-2xl font-serif font-bold text-[#C0392B]">
-            {stats?.total_sar_filed || 9}
+            {stats?.total_sar_filed ?? 0}
           </div>
           <div className="text-[11px] text-[#6B6A65] mt-1">Exceeding regulatory thresholds</div>
         </Card>
@@ -284,11 +284,11 @@ export const AiAgentPage: React.FC = () => {
             <div className="pt-4 border-t border-[#E8E6DC] flex flex-wrap items-center justify-between gap-4 text-xs text-[#6B6A65]">
               <div>
                 <strong className="text-[#141413]">Stop Reason:</strong>{' '}
-                <span>{caseDetail?.stop_reason || 'Policy reassessment concluded with settled verdict.'}</span>
+                <span>{caseDetail?.stop_reason || 'Policy evaluation completed.'}</span>
               </div>
               <div className="flex items-center gap-4 font-mono text-[11px]">
-                <span>Tool Calls: <strong>{caseDetail?.tool_calls || 7}</strong></span>
-                <span>Latency: <strong>{caseDetail?.latency_s ? `${caseDetail.latency_s.toFixed(2)}s` : '4.12s'}</strong></span>
+                <span>Tool Calls: <strong>{caseDetail?.tool_calls !== undefined ? (typeof caseDetail.tool_calls === 'number' ? caseDetail.tool_calls : Array.isArray(caseDetail.tool_calls) ? caseDetail.tool_calls.length : 0) : 0}</strong></span>
+                <span>Latency: <strong>{caseDetail?.latency_s !== undefined ? `${caseDetail.latency_s.toFixed(2)}s` : '0.00s'}</strong></span>
               </div>
             </div>
           </div>

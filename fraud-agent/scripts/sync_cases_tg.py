@@ -18,9 +18,7 @@ def sync_all_cases():
         print("Failed to connect to TigerGraph.")
         sys.exit(1)
 
-    cases_dir = Path(config.BASE_DIR) / "cases"
-    if not cases_dir.exists():
-        cases_dir = Path(config.BASE_DIR) / "fraud-agent" / "cases"
+    cases_dir = config.CASES_OUTPUT_DIR
 
     for i in range(1, 21):
         case_id = f"HHG-{i:03d}"
@@ -48,8 +46,7 @@ def sync_all_cases():
             "written_to_graph": True
         }
 
-        # Upsert both HHG-XXX and CASE-HHG-XXX for universal compatibility
-        conn.upsertVertex("InvestigationCase", case_id, attrs)
+        # Upsert single CASE-HHG-XXX vertex
         conn.upsertVertex("InvestigationCase", f"CASE-{case_id}", attrs)
 
         # Upsert actions
@@ -67,7 +64,6 @@ def sync_all_cases():
                     "reason": action.get("reason", "")[:500]
                 }
                 conn.upsertVertex("ActionRecord", aid, a_attrs)
-                conn.upsertEdge("InvestigationCase", case_id, "CASE_RECOMMENDS_ACTION", "ActionRecord", aid)
                 conn.upsertEdge("InvestigationCase", f"CASE-{case_id}", "CASE_RECOMMENDS_ACTION", "ActionRecord", aid)
 
     print("Successfully synced all 20 benchmark cases into TigerGraph.")

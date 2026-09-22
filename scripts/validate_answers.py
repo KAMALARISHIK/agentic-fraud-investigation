@@ -1,12 +1,18 @@
 import sys
 import os
+import importlib.util
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent / "fraud-agent"
-sys.path.insert(0, str(BASE_DIR))
-os.chdir(str(BASE_DIR))
+FRAUD_AGENT_DIR = Path(__file__).resolve().parent.parent / "fraud-agent"
+if str(FRAUD_AGENT_DIR) not in sys.path:
+    sys.path.insert(0, str(FRAUD_AGENT_DIR))
 
-from scripts.validate_answers import validate_all_answers
+spec = importlib.util.spec_from_file_location("fraud_agent_validate_answers", str(FRAUD_AGENT_DIR / "scripts" / "validate_answers.py"))
+module = importlib.util.module_from_spec(spec)
+sys.modules["fraud_agent_validate_answers"] = module
+spec.loader.exec_module(module)
+
+validate_all_answers = module.validate_all_answers
 
 if __name__ == "__main__":
     is_valid = validate_all_answers()
