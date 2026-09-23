@@ -11,11 +11,11 @@
 
 ## 📌 Links & Artifacts
 - **Public GitHub Repository**: [https://github.com/KAMALARISHIK/agentic-fraud-investigation](https://github.com/KAMALARISHIK/agentic-fraud-investigation)
-- **Demo Video URL**: `[DEMO_VIDEO_URL_PLACEHOLDER - Coming Soon]`
-- **Technical Blog URL**: `[TECHNICAL_BLOG_URL_PLACEHOLDER - Coming Soon]`
+- **Demo Video URL**: https://drive.google.com/file/d/1TRRiNRBluSd-EGdKPaP3uRkw2ujP3B8o/view?usp=sharing
+- **Technical Blog URL**: https://medium.com/@rohitkamala1980/fraudsight-agent-ai-powered-fraud-investigation-with-langgraph-and-tigergraph-e721eced7477 
 - **Social Posts**:
-  - `[TWITTER_X_POST_URL_PLACEHOLDER - Tagging @TigerGraphDB and @247pmstudio]`
-  - `[LINKEDIN_POST_URL_PLACEHOLDER - Tagging @TigerGraphDB and @247pmstudio]`
+  - https://x.com/RohitKamal21328/status/2102848525352718342 
+  - https://www.linkedin.com/feed/update/urn:li:activity:7508613124200120320/
 
 ---
 
@@ -54,7 +54,7 @@ Traditional rule engines and isolated ML models flag anomalies with high false-p
 
 ---
 
-## 🏗️ 2. How It Works
+##  2. How It Works
 
 The platform coordinates an autonomous state machine powered by **LangGraph**, **Google Gemini 2.5 Flash**, **tigergraph-mcp**, and a deterministic **Policy Engine**.
 
